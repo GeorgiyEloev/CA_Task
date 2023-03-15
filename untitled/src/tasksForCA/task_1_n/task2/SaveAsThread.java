@@ -1,6 +1,7 @@
 package tasksForCA.task_1_n.task2;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class SaveAsThread implements Runnable {
@@ -15,16 +16,24 @@ public class SaveAsThread implements Runnable {
 
   @Override
   public void run() {
-    File file = new File(path);
     try {
       FileWriter pw = new FileWriter(path, true);
-      for (int i : arr) {
-        pw.write(i + ", ");
-      }
+      System.out.println();
+
+      pw.write(arrToString());
+
       pw.close();
-    }  catch (IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
+  }
+
+  private String arrToString() {
+    String str = "";
+    for (int i : arr) {
+      str += i + ", ";
+    }
+    return str;
   }
 }

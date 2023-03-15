@@ -2,6 +2,8 @@ package tasksForCA.task_1_n.task1;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,12 +11,11 @@ public class Task1 {
   static int maxFromArr = 0;
   static int minFromArr = 0;
 
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) throws InterruptedException, IOException {
 
-    var arr = getArray("/Users/user/Desktop/stude/CA_Task/untitled/src/tasksForCA/task_1_n/task1/output-onlinenumbertools.txt");
+    ArrayList<Integer> arr = getArray("/Users/user/Desktop/stude/CA_Task/untitled/src/tasksForCA/task_1_n/task1/text.txt");
 
-
-    Thread thread_max = new Thread(new Runnable() {
+    Thread threadMax = new Thread(new Runnable() {
       @Override
       public void run() {
         int max = arr.get(0);
@@ -27,7 +28,7 @@ public class Task1 {
       }
     });
 
-    Thread thread_min = new Thread(new Runnable() {
+    Thread threadMin = new Thread(new Runnable() {
       @Override
       public void run() {
         int min = arr.get(0);
@@ -40,11 +41,11 @@ public class Task1 {
       }
     });
 
-    thread_max.start();
-    thread_min.start();
+    threadMax.start();
+    threadMin.start();
 
-    thread_max.join();
-    thread_min.join();
+    threadMax.join();
+    threadMin.join();
 
     System.out.println(maxFromArr);
     System.out.println(minFromArr);
@@ -56,11 +57,8 @@ public class Task1 {
 
     try {
       Scanner scan = new Scanner(file);
-
-      String str = scan.nextLine();
-      String[] arrStr = str.split(", ");
-      for (int i = 0; i < arrStr.length; i++) {
-        arr.add(Integer.parseInt(arrStr[i]));
+      while (scan.hasNextInt()) {
+        arr.add(scan.nextInt());
       }
     } catch (FileNotFoundException e) {
       System.out.println(e);
