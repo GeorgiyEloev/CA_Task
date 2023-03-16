@@ -9,15 +9,18 @@ public class Task4 {
   public static void main(String[] args) {
 
     String[] fruits = {"ывауц", "кцуцуккуц", "цкууцк", "кук", "кerук", "кeук", "куrк"};
-    Filter<String> filter = s -> s.length() > 5;
-    String[] filteredFruits = filter(fruits, filter);
+    Filter filter = s -> {
+      String str = (String) s;
+     return str.length() > 5;
+    };
+    String[] filteredFruits = (String[]) filter(fruits, filter);
     System.out.println(Arrays.toString(filteredFruits));
 
   }
 
-  public static <T> T[] filter(T[] array, Filter<T> filter) {
-    ArrayList<T> result = new ArrayList<>();
-    for (T item : array) {
+  public static Object[] filter(Object[] array, Filter filter) {
+    ArrayList<Object> result = new ArrayList<>();
+    for (Object item : array) {
       if (filter.apply(item)) {
         result.add(item);
       }
