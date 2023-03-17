@@ -21,8 +21,6 @@ import java.io.IOException;
 @EnableWebSecurity
 public class SecurityConfig {
   private final JwtTokenProvider jwtTokenProvider;
-  private static final String LOGIN_ENDPOINT = ;
-  private static final String REGISTER_ENDPOINT = "/api/v1/auth/register";
 
   @Autowired
   public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -46,8 +44,8 @@ public class SecurityConfig {
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .authorizeRequests()
-            .antMatchers("/api/v1/auth/*").permitAll()
+            .authorizeHttpRequests()
+            .requestMatchers("/api/v1/auth/*").permitAll()
             .anyRequest().authenticated()
             .and()
             .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
