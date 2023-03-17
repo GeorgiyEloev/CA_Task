@@ -33,7 +33,7 @@ public class MyLinkedList<E> implements List<E> {
 
   @Override
   public Iterator<E> iterator() {
-    return null;
+    return new Itr();
   }
 
   @Override
@@ -256,12 +256,12 @@ public class MyLinkedList<E> implements List<E> {
 
   @Override
   public ListIterator<E> listIterator() {
-    return null;
+    return new ListItr();
   }
 
   @Override
   public ListIterator<E> listIterator(int index) {
-    return null;
+    return new ListItr(index);
   }
 
   @Override
@@ -281,17 +281,43 @@ public class MyLinkedList<E> implements List<E> {
 
   @Override
   public boolean retainAll(Collection<?> c) {
-    return false;
+    boolean flag = false;
+
+    for (Item<E> item = first; item != null; item = item.next) {
+      if (!c.contains(item.value)) {
+        remove(item);
+        flag = true;
+      }
+    }
+
+    return flag;
   }
 
   @Override
   public boolean removeAll(Collection<?> c) {
-    return false;
+    boolean flag = false;
+
+    for (Item<E> item = first; item != null; item = item.next) {
+      if (c.contains(item.value)) {
+        remove(item);
+        flag = true;
+      }
+    }
+
+    return flag;
   }
 
   @Override
   public boolean containsAll(Collection<?> c) {
-    return false;
+    boolean flag = true;
+
+    for (Object item : c) {
+      if (!contains(item)) {
+        flag = false;
+      }
+    }
+
+    return flag;
   }
 
 
@@ -307,64 +333,97 @@ public class MyLinkedList<E> implements List<E> {
     }
   }
 
-  private class Itr<E> implements Iterator<E> {
+  private class Itr implements Iterator<E> {
+
+    private int index = 0;
 
     @Override
     public boolean hasNext() {
-      return false;
+      return get(index) != null;
     }
 
     @Override
     public E next() {
+      if (index < size()) {
+        E item = (E) get(index);
+        index++;
+        return item;
+      }
       return null;
     }
   }
 
-  private class ListItr<E> implements ListIterator<E> {
+
+  private class ListItr implements ListIterator<E> {
+
+    private int index = 0;
+
+    public ListItr() {
+    }
+
+    public ListItr(int index) {
+      this.index = index;
+    }
+
 
     @Override
     public boolean hasNext() {
-      return false;
+      return get(index) != null;
     }
 
     @Override
     public E next() {
+      if (index < size()) {
+        E item = (E) get(index);
+        index++;
+        return item;
+      }
       return null;
     }
 
     @Override
     public boolean hasPrevious() {
+      if (index >= 0) {
+        return get(index) != null;
+      }
       return false;
     }
 
     @Override
     public E previous() {
+      if (index >= 0) {
+        E item = (E) get(index);
+        index--;
+        return item;
+      }
       return null;
     }
 
     @Override
     public int nextIndex() {
-      return 0;
+      return index;
     }
 
     @Override
     public int previousIndex() {
-      return 0;
+      return index - 1;
     }
 
     @Override
     public void remove() {
-
+      MyLinkedList.this.remove(index);
+      index--;
     }
 
     @Override
     public void set(E o) {
-
+      MyLinkedList.this.set(index, o);
     }
 
     @Override
     public void add(E o) {
-
+      MyLinkedList.this.add(index, o);
+      index++;
     }
   }
 }
