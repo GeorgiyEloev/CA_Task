@@ -1,6 +1,6 @@
 package com.example.serverForCA.modules.item;
 
-import com.example.serverForCA.constans.BaseEntity;
+import com.example.serverForCA.utils.constans.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -20,4 +20,12 @@ public class Item extends BaseEntity {
 
   @Column(name = "count")
   private Integer count;
+
+  public Item(){}
+
+  public Item(String name, String description, Integer count) {
+    this.name = name;
+    this.description = description;
+    this.count = count;
+  }
 }

@@ -2,39 +2,32 @@ package com.example.serverForCA.config;
 
 import com.example.serverForCA.security.jwt.JwtConfigurer;
 import com.example.serverForCA.security.jwt.JwtTokenProvider;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
   private final JwtTokenProvider jwtTokenProvider;
+  private final AuthenticationConfiguration authConfiguration;
+
 
   @Autowired
-  public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+  public SecurityConfig(JwtTokenProvider jwtTokenProvider, AuthenticationConfiguration authConfiguration) {
     this.jwtTokenProvider = jwtTokenProvider;
+    this.authConfiguration = authConfiguration;
   }
 
   @Bean
-  public AuthenticationEntryPoint authenticationEntryPoint() {
-    return new AuthenticationEntryPoint() {
-      @Override
-      public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        
-      }
-    };
+  public AuthenticationManager authenticationManager() throws Exception {
+    return authConfiguration.getAuthenticationManager();
   }
 
   @Bean
@@ -45,10 +38,12 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests()
-            .requestMatchers("/api/v1/auth/*").permitAll()
+            .requestMatchers(
+                    "/api/v1/auth/*",
+                    "/swagger-ui/**" ,
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
-            .and()
-            .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
             .and()
             .apply(new JwtConfigurer(jwtTokenProvider));
     return http.build();

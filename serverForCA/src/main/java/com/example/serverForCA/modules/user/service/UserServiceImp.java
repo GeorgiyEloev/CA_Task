@@ -3,6 +3,7 @@ package com.example.serverForCA.modules.user.service;
 import com.example.serverForCA.exceptions.UserNotFoundException;
 import com.example.serverForCA.modules.user.User;
 import com.example.serverForCA.modules.user.UserRepository;
+import com.example.serverForCA.modules.user.dto.UserUpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +33,11 @@ public class UserServiceImp implements UserService {
 
 
   @Override
-  public User updateUser(User user) {
-    User oldUser = getUser(user.getId());
+  public User updateUser(String email, UserUpdateDTO updateDto) {
+    User oldUser = getUserByEmail(email);
 
-    oldUser.setAge(user.getAge());
-    oldUser.setName(user.getName());
+    oldUser.setAge(updateDto.getAge() == null? oldUser.getAge(): updateDto.getAge());
+    oldUser.setName(updateDto.getName() == null ? oldUser.getName(): updateDto.getName());
 
     return userRepository.save(oldUser);
   }

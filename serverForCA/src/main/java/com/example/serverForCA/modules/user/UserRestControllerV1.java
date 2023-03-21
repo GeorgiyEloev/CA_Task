@@ -1,13 +1,16 @@
 package com.example.serverForCA.modules.user;
 
+import com.example.serverForCA.modules.user.dto.UserUpdateDTO;
 import com.example.serverForCA.modules.user.service.UserService;
+import com.example.serverForCA.utils.annotations.EmailFromToken;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -20,13 +23,20 @@ public class UserRestControllerV1 {
     this.userService = userService;
   }
 
+  @Operation(summary = "Get info about user")
   @GetMapping("/me")
-  ResponseEntity getMe() {
-    return new ResponseEntity("me", HttpStatus.OK);
+  ResponseEntity<User> getMe(@AuthenticationPrincipal UserDetails userDetails) {
+    String email = userDetails.getUsername();
+    return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
   }
 
+  @Operation(summary = "Update user")
   @PutMapping("/me")
-  ResponseEntity updateMe() {
-    return new ResponseEntity("me", HttpStatus.OK);
+  ResponseEntity<User> updateMe(
+          @EmailFromToken String email,
+          @RequestBody UserUpdateDTO updateDto
+  ) {
+    User user = userService.updateUser(email, updateDto);
+    return new ResponseEntity<>(user , HttpStatus.OK);
   }
 }
