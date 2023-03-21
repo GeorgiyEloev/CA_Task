@@ -1,5 +1,6 @@
 package com.example.serverForCA.security.jwt;
 
+import com.example.serverForCA.exceptions.JwtAuthenticationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;

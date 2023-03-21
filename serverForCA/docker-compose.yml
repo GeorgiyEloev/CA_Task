@@ -13,5 +13,42 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  db_test:
+    image: postgres
+    container_name: db_test
+    restart: always
+    environment:
+      POSTGRES_DB: items_test
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+
+  server:
+    build: ./
+    ports:
+      - "8080:8080"
+
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/items
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=user
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://db:5432/items
+
+
+      - SPRING_DATASOURCE_FOR_TEST_URL=jdbc:postgresql://db_test:5433/items_test
+      - SPRING_DATASOURCE_FOR_TEST_USERNAME=user
+      - SPRING_DATASOURCE_FOR_TEST_PASSWORD=user
+      - SPRING_LIQUIBASE_FOR_TEST_URL=jdbc:postgresql://db_test:5433/items_test
+
+      - JWT_TOKEN_SECRET=jwtAppDemo
+      - JWT_TOKEN_EXPIRED=3600000
+    depends_on:
+      - db
+      - db_test
+
 volumes:
   pgdata:
+  pgdata_test:

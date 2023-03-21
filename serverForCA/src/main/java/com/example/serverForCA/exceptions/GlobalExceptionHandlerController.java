@@ -13,6 +13,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandlerController {
 
+
+  @ExceptionHandler(JwtAuthenticationException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ResponseBody
+  public ResponseEntity<Response> handleResourceJwtAuthenticationException(Exception e) {
+    Response response = new Response(e.getMessage());
+    return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+  }
   @ExceptionHandler(AuthenticationException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ResponseBody

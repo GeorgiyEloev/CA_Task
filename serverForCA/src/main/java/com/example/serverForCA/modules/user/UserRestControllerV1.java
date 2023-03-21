@@ -1,5 +1,6 @@
 package com.example.serverForCA.modules.user;
 
+import com.example.serverForCA.modules.user.dto.UserDto;
 import com.example.serverForCA.modules.user.dto.UserUpdateDTO;
 import com.example.serverForCA.modules.user.service.UserService;
 import com.example.serverForCA.utils.annotations.EmailFromToken;
@@ -25,18 +26,18 @@ public class UserRestControllerV1 {
 
   @Operation(summary = "Get info about user")
   @GetMapping("/me")
-  ResponseEntity<User> getMe(@AuthenticationPrincipal UserDetails userDetails) {
-    String email = userDetails.getUsername();
-    return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
+  ResponseEntity<UserDto> getMe(@EmailFromToken String email) {
+    User user = userService.getUserByEmail(email);
+    return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
   @Operation(summary = "Update user")
   @PutMapping("/me")
-  ResponseEntity<User> updateMe(
+  ResponseEntity<UserDto> updateMe(
           @EmailFromToken String email,
           @RequestBody UserUpdateDTO updateDto
   ) {
     User user = userService.updateUser(email, updateDto);
-    return new ResponseEntity<>(user , HttpStatus.OK);
+    return new ResponseEntity<>(new UserDto(user) , HttpStatus.OK);
   }
 }

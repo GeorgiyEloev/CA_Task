@@ -5,6 +5,7 @@ import com.example.serverForCA.modules.item.dto.UpdateItemDto;
 import com.example.serverForCA.modules.item.service.ItemService;
 import com.example.serverForCA.utils.constans.Response;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class ItemRestControllerV1 {
 
   @Operation(summary = "Get all item or find items")
   @GetMapping()
-  ResponseEntity<List<Item>> getById(@RequestParam(defaultValue = "0") Integer page,
+  ResponseEntity<List<Item>> getAll(@RequestParam(defaultValue = "0") Integer page,
                                      @RequestParam(defaultValue = "10") Integer size,
                                      @RequestParam(defaultValue = "") String name) {
     List<Item> items = itemService.getAllOrFindAll(page, size, name);
@@ -48,7 +49,7 @@ public class ItemRestControllerV1 {
 
   @Operation(summary = "Create item")
   @PostMapping()
-  ResponseEntity<Item> createItem(@RequestBody CreateItemDto createItemDto) {
+  ResponseEntity<Item> createItem(@RequestBody @Valid CreateItemDto createItemDto) {
     Item item = itemService.createItem(createItemDto);
     return new ResponseEntity<>(item, HttpStatus.OK);
   }

@@ -1,5 +1,7 @@
 package com.example.serverForCA.config;
 
+import com.example.serverForCA.exceptions.exception_config.ExceptionHandlerConfigurer;
+import com.example.serverForCA.exceptions.exception_config.FilterChainExceptionHandler;
 import com.example.serverForCA.security.jwt.JwtConfigurer;
 import com.example.serverForCA.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,14 @@ public class SecurityConfig {
   private final JwtTokenProvider jwtTokenProvider;
   private final AuthenticationConfiguration authConfiguration;
 
+  private final FilterChainExceptionHandler filterChainExceptionHandler;
+
 
   @Autowired
-  public SecurityConfig(JwtTokenProvider jwtTokenProvider, AuthenticationConfiguration authConfiguration) {
+  public SecurityConfig(JwtTokenProvider jwtTokenProvider, AuthenticationConfiguration authConfiguration, FilterChainExceptionHandler filterChainExceptionHandler) {
     this.jwtTokenProvider = jwtTokenProvider;
     this.authConfiguration = authConfiguration;
+    this.filterChainExceptionHandler = filterChainExceptionHandler;
   }
 
   @Bean
@@ -44,6 +49,8 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
+            .and()
+            .apply(new ExceptionHandlerConfigurer(filterChainExceptionHandler))
             .and()
             .apply(new JwtConfigurer(jwtTokenProvider));
     return http.build();
